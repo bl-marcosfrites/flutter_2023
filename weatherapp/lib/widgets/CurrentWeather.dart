@@ -1,42 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weatherapp/models/WeatherData.dart';
+import 'package:weatherapp/providers/WeatherDataProvider.dart';
 import 'package:weatherapp/services/WeatherService.dart';
 
-class CurrentWeather extends StatefulWidget {
+class CurrentWeather extends ConsumerStatefulWidget {
   const CurrentWeather({
     super.key,
   });
 
   @override
-  State<CurrentWeather> createState() => _CurrentWeatherState();
+  ConsumerState<CurrentWeather> createState() => _CurrentWeatherState();
 }
 
-class _CurrentWeatherState extends State<CurrentWeather> {
-  WeatherData weatherData = WeatherData(
-    currentWeatherData: CurrentWeatherData(
-      temperature: 0,
-      windSpeed: 0,
-      windDirection: 0,
-      weatherCode: 0,
-    ),
-    hourly: Hourly(
-      time: [],
-      temperature2M: [],
-    ),
-  );
-
+class _CurrentWeatherState extends ConsumerState<CurrentWeather> {
+  var firstBuild = true;
   @override
   void initState() {
-    getWeatherData().then((value) {
-      setState(() {
-        weatherData = value;
-      });
-    });
+    fetchWeatherData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    WeatherData weatherData = ref.read(weatherDataNotifier).weatherData;
+
     return Column(
       children: [
         Padding(
@@ -71,5 +59,14 @@ class _CurrentWeatherState extends State<CurrentWeather> {
         ),
       ],
     );
+  }
+
+  void fetchWeatherData() async {
+    if (firstBuild) {
+      getWeatherData().then((value) => {
+        ref.read(weatherDataNotifier).setWeatherData(value),
+      });
+    }
+    firstBuild = false;
   }
 }
