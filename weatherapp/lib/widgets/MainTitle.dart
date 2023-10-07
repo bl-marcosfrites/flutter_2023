@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MainTitle extends StatelessWidget {
+class MainTitle extends ConsumerStatefulWidget {
+  final TextEditingController cityController;
+
   const MainTitle({
+    required this.cityController,
     super.key,
   });
+
+  @override
+  ConsumerState<MainTitle> createState() => _MainTitleState();
+}
+
+class _MainTitleState extends ConsumerState<MainTitle> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +34,19 @@ class MainTitle extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: FormField(
-                    builder: (field) {
-                      return const SizedBox(
-                        width: 300,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Enter a city',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      );
-                    }
+                  builder: (field) {
+                    return SizedBox(
+                      child: TextField(
+                        controller: widget.cityController,
+                        onChanged: (String value) {
+                          widget.cityController.text = value;
+                        },
+                        onEditingComplete: () {
+                          field.didChange(widget.cityController.text);
+                        },
+                      ),
+                    );
+                  }
                 ),
               ),
             ],

@@ -5,7 +5,10 @@ import 'package:weatherapp/providers/WeatherDataProvider.dart';
 import 'package:weatherapp/services/WeatherService.dart';
 
 class CurrentWeather extends ConsumerStatefulWidget {
+  final String city;
+
   const CurrentWeather({
+    required this.city,
     super.key,
   });
 
@@ -14,7 +17,6 @@ class CurrentWeather extends ConsumerStatefulWidget {
 }
 
 class _CurrentWeatherState extends ConsumerState<CurrentWeather> {
-  var firstBuild = true;
   @override
   void initState() {
     fetchWeatherData();
@@ -30,7 +32,7 @@ class _CurrentWeatherState extends ConsumerState<CurrentWeather> {
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            'Current Weather in Córdoba, Argentina',
+            'Current Weather in ${widget.city}',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
@@ -62,11 +64,15 @@ class _CurrentWeatherState extends ConsumerState<CurrentWeather> {
   }
 
   void fetchWeatherData() async {
+    /*
     if (firstBuild) {
       getWeatherData().then((value) => {
         ref.read(weatherDataNotifier).setWeatherData(value),
       });
     }
-    firstBuild = false;
+    */
+    getWeatherDataForCity(widget.city).then((value) => {
+      ref.read(weatherDataNotifier).setWeatherData(value),
+    });
   }
 }
